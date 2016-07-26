@@ -85,7 +85,7 @@ public class DbProducts
         try
         {
             var p = GetProductById(_P.ProductID);
-            var c1 = p.TimeStamp == _P.TimeStamp;
+            var c1 = p.TimeStamp.Equals(_P.TimeStamp);
             if (_con.State != System.Data.ConnectionState.Open)
                 _con.Open();
 
@@ -98,6 +98,41 @@ public class DbProducts
                 _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
                 _cmd.Parameters.Add(new SqlParameter("@TimeStamp", _P.TimeStamp));
            
+            if (_cmd.ExecuteNonQuery() > 0)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+        finally
+        {
+            if (_con.State != System.Data.ConnectionState.Closed)
+                _con.Close();
+        }
+    }
+
+
+    public bool UpdateProductAsIs(Product _P)
+    {
+        try
+        {
+            var p = GetProductById(_P.ProductID);
+            var c1 = p.TimeStamp == _P.TimeStamp;
+            if (_con.State != System.Data.ConnectionState.Open)
+                _con.Open();
+
+
+            SqlCommand _cmd = _con.CreateCommand();
+            _cmd.CommandText = "Update Products set Name=@Name,Unit=@Unit,Qty=@Qty Where ProductID=@ProductID";
+            _cmd.Parameters.Add(new SqlParameter("@Name", _P.Name));
+            _cmd.Parameters.Add(new SqlParameter("@Qty", _P.Qty));
+            _cmd.Parameters.Add(new SqlParameter("@Unit", _P.Unit));
+            _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
+            _cmd.Parameters.Add(new SqlParameter("@TimeStamp", _P.TimeStamp));
+
             if (_cmd.ExecuteNonQuery() > 0)
                 return true;
             else

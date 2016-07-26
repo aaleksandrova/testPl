@@ -32,6 +32,9 @@ public class ProductList : IHttpHandler
             case "update":
                 context.Response.Write(Update(context));
                 break;
+            case "updateasis":
+                context.Response.Write(UpdateAsIs(context));
+                break;
             case "delete":
                 context.Response.Write(Delete());
                 break;
@@ -143,7 +146,7 @@ public class ProductList : IHttpHandler
             _P.Unit = context.Request.Params["unit"].ToString();
             _P.Qty = Convert.ToDecimal(context.Request.Params["Qty"].ToString());
             _P.ProductID = Convert.ToInt32(context.Request.Params["ProductID"].ToString());
-            _P.TimeStamp = Encoding.ASCII.GetBytes(context.Request.Params["ver"]);
+            _P.TimeStamp = Encoding.ASCII.GetBytes(context.Request.Params["ver"].ToString());
 
             _response.IsSucess = true;
             _response.Message = "SucessFully Updated";
@@ -157,7 +160,33 @@ public class ProductList : IHttpHandler
         }
         return jSearializer.Serialize(_response);
     }
+    public string UpdateAsIs(HttpContext context)
+    {
+        JsonResponse _response = new JsonResponse();
+        System.Web.Script.Serialization.JavaScriptSerializer jSearializer =
+                     new System.Web.Script.Serialization.JavaScriptSerializer();
+        try
+        {
+            Product _P = new Product();
+            _P.Name = context.Request.Params["name"].ToString();
+            _P.Unit = context.Request.Params["unit"].ToString();
+            _P.Qty = Convert.ToDecimal(context.Request.Params["Qty"].ToString());
+            _P.ProductID = Convert.ToInt32(context.Request.Params["ProductID"].ToString());
+            _P.TimeStamp = Encoding.ASCII.GetBytes(context.Request.Params["ver"]);
 
+            _response.IsSucess = true;
+            _response.Message = "SucessFully Updated";
+            _response.CallBack = CallBackMethodName;
+            _response.ResponseData = _DbProducts.UpdateProductAsIs(_P);
+        }
+        catch (Exception ex)
+        {
+            _response.Message = ex.Message;
+            _response.IsSucess = false;
+        }
+        return jSearializer.Serialize(_response);
+    }
+    
     public string Delete()
     {
         JsonResponse _response = new JsonResponse();

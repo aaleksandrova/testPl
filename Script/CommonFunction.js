@@ -26,15 +26,22 @@
 
 $(document).ready(function() { FillListing(); });
 
-var ProductID = 0;
 
-function SaveProducts() {
 
+function SaveProducts(mode) {
     var Param = "name=" + document.getElementById("txtName").value + "&unit=" + document.getElementById("txtUnit").value + "&Qty=" + document.getElementById("txtQty").value + "&ver=" + document.getElementById("txtVer").value;
-    if (ProductID == 0)
+
+    var ProductID = $("#txtId").val();
+
+    if (ProductID == 0) {
         DoAjaxCall("?method=Insert&callbackmethod=InsertProductSucess&" + Param, "json", "");
-    else
+    }
+    if (ProductID != 0 && (mode == undefined)) {
         DoAjaxCall("?method=Update&callbackmethod=UpdateProductSucess&" + Param + "&ProductID=" + ProductID, "json", "");
+    }
+    if (mode == 'asIs') {
+        DoAjaxCall("?method=UpdateAsIs&callbackmethod=UpdateProductSucess&" + Param + "&ProductID=" + ProductID, "json", "");
+    }
 }
 function InsertProductSucess(data, message) {
     FillListing();
@@ -46,15 +53,17 @@ function ClearValue() {
     $("#txtName").val("");
     $("#txtUnit").val("");
     $("#txtQty").val("");
+    $("#txtId").val("");
+    $("#txtVer").val("");
 }
 
 function UpdateProductSucess(data, message) {
     if (data == true) {
         FillListing();
         alert(message);
-        ProductID = 0;
+        //ProductID = 0;
         ClearValue();
-
+        $("#errorMsg").css('display', 'none');
     } else {
         $("#errorMsg").css('display', 'block');
     }
@@ -94,12 +103,13 @@ function EditProduct(ProductID) {
 }
 
 function EditSucess(data, message) {
-    ProductID = data.ProductID;
     $("#txtName").val(data.Name);
     $("#txtUnit").val(data.Unit);
     $("#txtQty").val(data.Qty);
     $("#txtVer").val(bin2string(data.TimeStamp));
+    $("#txtId").val(data.ProductID);
 }
+
 function bin2string(array) {
     var result = "";
     for (var i = 0; i < array.length; ++i) {
