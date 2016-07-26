@@ -29,7 +29,7 @@ $(document).ready(function() { FillListing(); });
 
 
 function SaveProducts(mode) {
-    var Param = "name=" + document.getElementById("txtName").value + "&unit=" + document.getElementById("txtUnit").value + "&Qty=" + document.getElementById("txtQty").value + "&ver=" + document.getElementById("txtVer").value;
+    var Param = "name=" + $("#txtName").val() + "&unit=" + $("#txtUnit").val() + "&Qty=" + $("#txtQty").val() + "&ver=" + $("#txtVer").val();
 
     var ProductID = $("#txtId").val();
 
@@ -42,6 +42,10 @@ function SaveProducts(mode) {
     if (mode == 'asIs') {
         DoAjaxCall("?method=UpdateAsIs&callbackmethod=UpdateProductSucess&" + Param + "&ProductID=" + ProductID, "json", "");
     }
+    if (mode == 'setFromDB') {
+        FillListing();
+        ClearValue();
+    } 
 }
 function InsertProductSucess(data, message) {
     FillListing();
@@ -55,17 +59,19 @@ function ClearValue() {
     $("#txtQty").val("");
     $("#txtId").val("");
     $("#txtVer").val("");
+    $("#errorMsg").css('display', 'none');
+    $("#newData").css('display', 'none');
+
 }
 
 function UpdateProductSucess(data, message) {
     if (data == true) {
         FillListing();
-        alert(message);
-        //ProductID = 0;
         ClearValue();
-        $("#errorMsg").css('display', 'none');
     } else {
         $("#errorMsg").css('display', 'block');
+        $("#newData").css('display', 'block');
+        GetNewProduct($("#txtId").val());
     }
 }
 
@@ -100,6 +106,18 @@ function DeleteSucess(data, message) {
 
 function EditProduct(ProductID) {
     DoAjaxCall("?method=getbyid&callbackmethod=EditSucess&param=" + ProductID, "json", "");
+}
+
+function GetNewProduct(ProductID) {
+    DoAjaxCall("?method=getbyid&callbackmethod=EditNewSucess&param=" + ProductID, "json", "");
+}
+
+function EditNewSucess(data, message) {
+    $("#txtNewName").val(data.Name);
+    $("#txtNewUnit").val(data.Unit);
+    $("#txtNewQty").val(data.Qty);
+    $("#txtNewVer").val(bin2string(data.TimeStamp));
+    $("#txtNewId").val(data.ProductID);
 }
 
 function EditSucess(data, message) {
