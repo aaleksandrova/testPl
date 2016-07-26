@@ -16,6 +16,9 @@
          <div style="display: block;">
                 <input  type="text" id="txtVer" style="width: 250px" />
           </div>
+        <div style="color: red; display: none;" id="errorMsg">
+            The record you attempted to edit was modified by another user after you got the original value.
+        </div>
     <table cellpadding="2" cellspacing="2" border="1" width="400px">
         <tr style="background-color: Gray">
             <td colspan="2" align="center">

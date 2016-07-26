@@ -49,10 +49,15 @@ function ClearValue() {
 }
 
 function UpdateProductSucess(data, message) {
-    FillListing();
-    alert(message);
-    ProductID = 0;
-    ClearValue();
+    if (data == true) {
+        FillListing();
+        alert(message);
+        ProductID = 0;
+        ClearValue();
+
+    } else {
+        $("#errorMsg").css('display', 'block');
+    }
 }
 
 function FillListing() {
