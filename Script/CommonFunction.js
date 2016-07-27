@@ -24,7 +24,10 @@
     });
 }
 
-$(document).ready(function() { FillListing(); });
+$(document).ready(function () {
+    $(".hide").css('display', 'none');
+    FillListing();
+});
 
 
 
@@ -59,9 +62,7 @@ function ClearValue() {
     $("#txtQty").val("");
     $("#txtId").val("");
     $("#txtVer").val("");
-    $("#errorMsg").css('display', 'none');
-    $("#newData").css('display', 'none');
-
+    $(".hide").css('display', 'none');
 }
 
 function UpdateProductSucess(data, message) {
@@ -69,8 +70,7 @@ function UpdateProductSucess(data, message) {
         FillListing();
         ClearValue();
     } else {
-        $("#errorMsg").css('display', 'block');
-        $("#newData").css('display', 'block');
+        $(".hide").css('display', 'block');
         GetNewProduct($("#txtId").val());
     }
 }
@@ -96,7 +96,6 @@ function FillListingSucess(data, message) {
 
 function DeleteProduct(ProductID) {
     DoAjaxCall("?method=delete&callbackmethod=DeleteSucess&param=" + ProductID, "json", "");
-
 }
 
 function DeleteSucess(data, message) {
@@ -116,7 +115,7 @@ function EditNewSucess(data, message) {
     $("#txtNewName").val(data.Name);
     $("#txtNewUnit").val(data.Unit);
     $("#txtNewQty").val(data.Qty);
-    $("#txtNewVer").val(bin2string(data.TimeStamp));
+    $("#txtNewVer").val(data.TimeStampAsString);
     $("#txtNewId").val(data.ProductID);
 }
 
@@ -124,24 +123,6 @@ function EditSucess(data, message) {
     $("#txtName").val(data.Name);
     $("#txtUnit").val(data.Unit);
     $("#txtQty").val(data.Qty);
-    $("#txtVer").val(bin2string(data.TimeStamp));
+    $("#txtVer").val(data.TimeStampAsString);
     $("#txtId").val(data.ProductID);
-}
-
-function bin2string(array) {
-    var result = "";
-    for (var i = 0; i < array.length; ++i) {
-        result += (String.fromCharCode(array[i]));
-    }
-    return result;
-}
-function pack(bytes) {
-    var str = "";
-    for (var i = 0; i < bytes.length; i += 2) {
-        var char = bytes[i] << 8;
-        if (bytes[i + 1])
-            char |= bytes[i + 1];
-        str += String.fromCharCode(char);
-    }
-    return str;
 }

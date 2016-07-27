@@ -85,7 +85,7 @@ public class DbProducts
         try
         {
             var p = GetProductById(_P.ProductID);
-            var c1 = p.TimeStamp.Equals(_P.TimeStamp);
+            var c1 = p.TimeStamp.SequenceEqual(_P.TimeStamp);
             if (_con.State != System.Data.ConnectionState.Open)
                 _con.Open();
 
@@ -259,9 +259,7 @@ public class DbProducts
                 _Product.Name = _Reader["Name"].ToString();
                 _Product.Qty = Convert.ToDecimal(_Reader["Qty"]);
                 _Product.Unit = _Reader["Unit"].ToString();
-
-                //var c = _Reader["TimeStamp"];
-                //var t = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Convert.ToInt64(_Reader["TimeStamp"])/1000);
+                _Product.TimeStampAsString = Helpers.GetString((byte[])(_Reader["TimeStamp"]));
 
                 _Product.TimeStamp =(byte[])(_Reader["TimeStamp"]);
             }
@@ -317,4 +315,23 @@ public class Product
     public Byte[] RowVersion { get; set; }
 
     public Byte[] TimeStamp { get; set; }
+
+    public string TimeStampAsString { get; set; }
+}
+
+public static class Helpers
+{
+    public static byte[] GetBytes(string str)
+    {
+        byte[] bytes = new byte[str.Length * sizeof(char)];
+        System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+        return bytes;
+    }
+
+    public static string GetString(byte[] bytes)
+    {
+        char[] chars = new char[bytes.Length / sizeof(char)];
+        System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
+        return new string(chars);
+    }
 }

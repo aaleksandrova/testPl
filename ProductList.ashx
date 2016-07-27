@@ -146,7 +146,7 @@ public class ProductList : IHttpHandler
             _P.Unit = context.Request.Params["unit"].ToString();
             _P.Qty = Convert.ToDecimal(context.Request.Params["Qty"].ToString());
             _P.ProductID = Convert.ToInt32(context.Request.Params["ProductID"].ToString());
-            _P.TimeStamp = Encoding.ASCII.GetBytes(context.Request.Params["ver"].ToString());
+            _P.TimeStamp = Helpers.GetBytes(context.Request.Params["ver"].ToString());
 
             _response.IsSucess = true;
             _response.Message = "SucessFully Updated";
