@@ -35,6 +35,15 @@ public class ProductList : IHttpHandler
             case "updateasis":
                 context.Response.Write(UpdateAsIs(context));
                 break;
+            case "updatename":
+                context.Response.Write(UpdateName(context));
+                break;
+            case "updatequality":
+                context.Response.Write(UpdateQuality(context));
+                break;
+            case "updateunit":
+                context.Response.Write(UpdateUnit(context));
+                break;
             case "delete":
                 context.Response.Write(Delete());
                 break;
@@ -109,31 +118,6 @@ public class ProductList : IHttpHandler
         return jSearializer.Serialize(_response);
     }
 
-    //public string UpdateOpt(HttpContext context)
-    //{
-    //    JsonResponse _response = new JsonResponse();
-    //    System.Web.Script.Serialization.JavaScriptSerializer jSearializer =
-    //        new System.Web.Script.Serialization.JavaScriptSerializer();
-    //    try
-    //    {
-    //        Product _P = new Product();
-    //        _P.Name = context.Request.Params["name"].ToString();
-    //        _P.Unit = context.Request.Params["unit"].ToString();
-    //        _P.Qty = Convert.ToDecimal(context.Request.Params["Qty"].ToString());
-    //        _P.ProductID = Convert.ToInt32(context.Request.Params["ProductID"].ToString());
-    //        _response.IsSucess = true;
-    //        _response.Message = "SucessFully Updated";
-    //        _response.CallBack = CallBackMethodName;
-    //        _response.ResponseData = _DbProducts.UpdateProductOptimisticCuncurrency(_P);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _response.Message = ex.Message;
-    //        _response.IsSucess = false;
-    //    }
-    //    return jSearializer.Serialize(_response);
-    //}
-
     public string Update(HttpContext context)
     {
         JsonResponse _response = new JsonResponse();
@@ -160,6 +144,7 @@ public class ProductList : IHttpHandler
         }
         return jSearializer.Serialize(_response);
     }
+    
     public string UpdateAsIs(HttpContext context)
     {
         JsonResponse _response = new JsonResponse();
@@ -172,12 +157,83 @@ public class ProductList : IHttpHandler
             _P.Unit = context.Request.Params["unit"].ToString();
             _P.Qty = Convert.ToDecimal(context.Request.Params["Qty"].ToString());
             _P.ProductID = Convert.ToInt32(context.Request.Params["ProductID"].ToString());
-            _P.TimeStamp = Encoding.ASCII.GetBytes(context.Request.Params["ver"]);
 
             _response.IsSucess = true;
             _response.Message = "SucessFully Updated";
             _response.CallBack = CallBackMethodName;
             _response.ResponseData = _DbProducts.UpdateProductAsIs(_P);
+        }
+        catch (Exception ex)
+        {
+            _response.Message = ex.Message;
+            _response.IsSucess = false;
+        }
+        return jSearializer.Serialize(_response);
+    }
+
+    public string UpdateName(HttpContext context)
+    {
+        JsonResponse _response = new JsonResponse();
+        System.Web.Script.Serialization.JavaScriptSerializer jSearializer =
+                     new System.Web.Script.Serialization.JavaScriptSerializer();
+        try
+        {
+            Product _P = new Product();
+            _P.Name = context.Request.Params["name"].ToString();
+            _P.ProductID = Convert.ToInt32(context.Request.Params["ProductID"].ToString());
+
+            _response.IsSucess = true;
+            _response.Message = "SucessFully Updated";
+            _response.CallBack = CallBackMethodName;
+            _response.ResponseData = _DbProducts.UpdateName(_P);
+        }
+        catch (Exception ex)
+        {
+            _response.Message = ex.Message;
+            _response.IsSucess = false;
+        }
+        return jSearializer.Serialize(_response);
+    }
+    
+    public string UpdateQuality(HttpContext context)
+    {
+        JsonResponse _response = new JsonResponse();
+        System.Web.Script.Serialization.JavaScriptSerializer jSearializer =
+                     new System.Web.Script.Serialization.JavaScriptSerializer();
+        try
+        {
+            Product _P = new Product();
+            _P.Name = context.Request.Params["Qty"].ToString();
+            _P.ProductID = Convert.ToInt32(context.Request.Params["ProductID"].ToString());
+
+            _response.IsSucess = true;
+            _response.Message = "SucessFully Updated";
+            _response.CallBack = CallBackMethodName;
+            _response.ResponseData = _DbProducts.UpdateName(_P);
+        }
+        catch (Exception ex)
+        {
+            _response.Message = ex.Message;
+            _response.IsSucess = false;
+        }
+        return jSearializer.Serialize(_response);
+    }
+    
+    public string UpdateUnit(HttpContext context)
+    {
+        JsonResponse _response = new JsonResponse();
+        System.Web.Script.Serialization.JavaScriptSerializer jSearializer =
+                     new System.Web.Script.Serialization.JavaScriptSerializer();
+        try
+        {
+            Product _P = new Product();
+            _P.Name = context.Request.Params["unit"].ToString();
+            _P.ProductID = Convert.ToInt32(context.Request.Params["ProductID"].ToString());
+
+            _response.IsSucess = true;
+            _response.Message = "SucessFully Updated";
+            _response.CallBack = CallBackMethodName;
+            _response.ResponseData = _DbProducts.UpdateName(_P);
         }
         catch (Exception ex)
         {

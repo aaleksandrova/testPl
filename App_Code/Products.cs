@@ -84,49 +84,11 @@ public class DbProducts
     {
         try
         {
-            var p = GetProductById(_P.ProductID);
-            var c1 = p.TimeStamp.SequenceEqual(_P.TimeStamp);
-            if (_con.State != System.Data.ConnectionState.Open)
+            if (_con.State != ConnectionState.Open)
                 _con.Open();
 
-           
             SqlCommand _cmd = _con.CreateCommand();
             _cmd.CommandText = "Update Products set Name=@Name,Unit=@Unit,Qty=@Qty Where ProductID=@ProductID and TimeStamp = @TimeStamp";
-                _cmd.Parameters.Add(new SqlParameter("@Name", _P.Name));
-                _cmd.Parameters.Add(new SqlParameter("@Qty", _P.Qty));
-                _cmd.Parameters.Add(new SqlParameter("@Unit", _P.Unit));
-                _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
-                _cmd.Parameters.Add(new SqlParameter("@TimeStamp", _P.TimeStamp));
-           
-            if (_cmd.ExecuteNonQuery() > 0)
-                return true;
-            else
-                return false;
-        }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
-        finally
-        {
-            if (_con.State != System.Data.ConnectionState.Closed)
-                _con.Close();
-        }
-    }
-
-
-    public bool UpdateProductAsIs(Product _P)
-    {
-        try
-        {
-            var p = GetProductById(_P.ProductID);
-            var c1 = p.TimeStamp == _P.TimeStamp;
-            if (_con.State != System.Data.ConnectionState.Open)
-                _con.Open();
-
-
-            SqlCommand _cmd = _con.CreateCommand();
-            _cmd.CommandText = "Update Products set Name=@Name,Unit=@Unit,Qty=@Qty Where ProductID=@ProductID";
             _cmd.Parameters.Add(new SqlParameter("@Name", _P.Name));
             _cmd.Parameters.Add(new SqlParameter("@Qty", _P.Qty));
             _cmd.Parameters.Add(new SqlParameter("@Unit", _P.Unit));
@@ -144,82 +106,127 @@ public class DbProducts
         }
         finally
         {
-            if (_con.State != System.Data.ConnectionState.Closed)
+            if (_con.State != ConnectionState.Closed)
                 _con.Close();
         }
     }
-    //public string UpdateProductOptimisticCuncurrency(Product _P)
-    //{
 
+    public bool UpdateProductAsIs(Product _P)
+    {
+        try
+        {
+            if (_con.State != ConnectionState.Open)
+                _con.Open();
 
-    //    try
-    //    {
+            SqlCommand _cmd = _con.CreateCommand();
+            _cmd.CommandText = "Update Products set Name=@Name,Unit=@Unit,Qty=@Qty Where ProductID=@ProductID";
+            _cmd.Parameters.Add(new SqlParameter("@Name", _P.Name));
+            _cmd.Parameters.Add(new SqlParameter("@Qty", _P.Qty));
+            _cmd.Parameters.Add(new SqlParameter("@Unit", _P.Unit));
+            _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
 
+            if (_cmd.ExecuteNonQuery() > 0)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+        finally
+        {
+            if (_con.State != ConnectionState.Closed)
+                _con.Close();
+        }
+    }
 
+    public bool UpdateName(Product _P)
+    {
+        try
+        {
+            if (_con.State != ConnectionState.Open)
+                _con.Open();
+            SqlCommand _cmd = _con.CreateCommand();
+            _cmd.CommandText = "Update Products set Name=@Name Where ProductID=@ProductID";
+            _cmd.Parameters.Add(new SqlParameter("@Name", _P.Name));
+            _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
 
-    //        SqlDataAdapter adapter = new SqlDataAdapter(
-    //"SELECT ProductID, Name FROM Products ORDER BY ProductID", _con);
+            if (_cmd.ExecuteNonQuery() > 0)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+        finally
+        {
+            if (_con.State != ConnectionState.Closed)
+                _con.Close();
+        }
+    }
 
-    //        adapter.UpdateCommand = new SqlCommand("UPDATE Products " +
-    //          "(ProductID, Name) VALUES(@ProductID, @Name) " +
-    //          "WHERE ProductID = @oldProductID AND Name = " +
-    //          "@oldName", _con);
-    //        adapter.UpdateCommand.Parameters.Add(
-    //          "@ProductID", SqlDbType.Int, 5, "ProductID");
-    //        adapter.UpdateCommand.Parameters.Add(
-    //          "@Name", SqlDbType.NVarChar, 30, "Name");
+    public bool UpdateQuality(Product _P)
+    {
+        try
+        {
+            if (_con.State != ConnectionState.Open)
+                _con.Open();
+            SqlCommand _cmd = _con.CreateCommand();
+            _cmd.CommandText = "Update Products set Qty=@Qty Where ProductID=@ProductID";
+            _cmd.Parameters.Add(new SqlParameter("@Qty", _P.Qty));
+            _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
 
+            if (_cmd.ExecuteNonQuery() > 0)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+        finally
+        {
+            if (_con.State != ConnectionState.Closed)
+                _con.Close();
+        }
+    }
 
-    //        SqlParameter parameter = adapter.UpdateCommand.Parameters.Add("@oldProductID", SqlDbType.Int, 5, "ProductID");
-    //        parameter.SourceVersion = DataRowVersion.Original;
-    //        parameter = adapter.UpdateCommand.Parameters.Add(
-    //          "@oldName", SqlDbType.NVarChar, 30, "Name");
-    //        parameter.SourceVersion = DataRowVersion.Original;
+    public bool UpdateUnit(Product _P)
+    {
+        try
+        {
+            if (_con.State != ConnectionState.Open)
+                _con.Open();
+            SqlCommand _cmd = _con.CreateCommand();
+            _cmd.CommandText = "Update Products set Unit=@Unit Where ProductID=@ProductID";
+            _cmd.Parameters.Add(new SqlParameter("@Unit", _P.Unit));
+            _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
 
-    //        adapter.RowUpdated += new SqlRowUpdatedEventHandler(OnRowUpdated);
+            if (_cmd.ExecuteNonQuery() > 0)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+        finally
+        {
+            if (_con.State != ConnectionState.Closed)
+                _con.Close();
+        }
+    }
 
-    //        DataSet dataSet = new DataSet();
-    //        adapter.Fill(dataSet, "Products");
-
-    //         Modify the DataSet contents.
-
-    //        adapter.Update(dataSet, "Products");
-
-    //        foreach (DataRow dataRow in dataSet.Tables["Products"].Rows)
-    //        {
-    //            if (dataRow.HasErrors)
-    //                Console.WriteLine(dataRow[0] + "\n" + dataRow.RowError);
-    //        }
-    //        if (adapter.UpdateBatchSize > 0)
-    //            return "Record Sucessfully Updated";
-    //        else
-    //            return "Record not Afftected to DataBase";
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        throw ex;
-    //    }
-    //    finally
-    //    {
-    //        if (_con.State != System.Data.ConnectionState.Closed)
-    //            _con.Close();
-    //    }
-    //}
-
-    //protected static void OnRowUpdated(object sender, SqlRowUpdatedEventArgs args)
-    //{
-    //    if (args.RecordsAffected == 0)
-    //    {
-    //        args.Row.RowError = "Optimistic Concurrency Violation Encountered";
-    //        args.Status = UpdateStatus.SkipCurrentRow;
-    //    }
-    //}
     public string DeleteProduct(int ProductID)
     {
         try
         {
-
-            if (_con.State != System.Data.ConnectionState.Open)
+            if (_con.State != ConnectionState.Open)
                 _con.Open();
             SqlCommand _cmd = _con.CreateCommand();
             _cmd.CommandText = "Delete From Products Where ProductID=@ProductID";
@@ -235,7 +242,7 @@ public class DbProducts
         }
         finally
         {
-            if (_con.State != System.Data.ConnectionState.Closed)
+            if (_con.State != ConnectionState.Closed)
                 _con.Close();
         }
     }
@@ -244,8 +251,7 @@ public class DbProducts
     {
         try
         {
-
-            if (_con.State != System.Data.ConnectionState.Open)
+            if (_con.State != ConnectionState.Open)
                 _con.Open();
             SqlCommand _cmd = _con.CreateCommand();
             _cmd.CommandText = "Select * From Products Where ProductID=@ProductID";
@@ -260,8 +266,7 @@ public class DbProducts
                 _Product.Qty = Convert.ToDecimal(_Reader["Qty"]);
                 _Product.Unit = _Reader["Unit"].ToString();
                 _Product.TimeStampAsString = Helpers.GetString((byte[])(_Reader["TimeStamp"]));
-
-                _Product.TimeStamp =(byte[])(_Reader["TimeStamp"]);
+                _Product.TimeStamp = (byte[])(_Reader["TimeStamp"]);
             }
             return _Product;
         }
@@ -271,7 +276,7 @@ public class DbProducts
         }
         finally
         {
-            if (_con.State != System.Data.ConnectionState.Closed)
+            if (_con.State != ConnectionState.Closed)
                 _con.Close();
         }
     }
@@ -324,14 +329,14 @@ public static class Helpers
     public static byte[] GetBytes(string str)
     {
         byte[] bytes = new byte[str.Length * sizeof(char)];
-        System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+        Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
         return bytes;
     }
 
     public static string GetString(byte[] bytes)
     {
         char[] chars = new char[bytes.Length / sizeof(char)];
-        System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
+        Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
         return new string(chars);
     }
 }

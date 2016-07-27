@@ -50,6 +50,25 @@ function SaveProducts(mode) {
         ClearValue();
     } 
 }
+
+function saveValue(id) {
+    var ProductID = $("#txtId").val();
+    var value = $("#" + id).val();
+    switch (id) {
+        case "txtName":
+            DoAjaxCall("?method=UpdateName&callbackmethod=UpdateProductSucess&" + "name=" + value + "&ProductID=" + ProductID, "json", "");
+            break;
+        case "txtUnit":
+            DoAjaxCall("?method=UpdateUnit&callbackmethod=UpdateProductSucess&" + "unit=" + value + "&ProductID=" + ProductID, "json", "");
+            break;
+        case "txtQty":
+            DoAjaxCall("?method=UpdateQuality&callbackmethod=UpdateProductSucess&" + "Qty=" + value + "&ProductID=" + ProductID, "json", "");
+            break;
+
+        default:
+    }
+}
+
 function InsertProductSucess(data, message) {
     FillListing();
     alert(message);
