@@ -35,6 +35,11 @@ public class DbProducts
                 _Product.Name = _Reader["Name"].ToString();
                 _Product.Unit = _Reader["Unit"].ToString();
                 _Product.Qty = Convert.ToDecimal(_Reader["Qty"]);
+                if (_Reader["LockUser"] != null)
+                _Product.LockUser = _Reader["LockUser"].ToString();
+                if( _Reader["LockTime"].ToString()!=String.Empty)
+                _Product.LockTime = DateTime.Parse(_Reader["LockTime"].ToString());
+
                 _lstProducts.Add(_Product);
 
             }
@@ -124,6 +129,37 @@ public class DbProducts
             _cmd.Parameters.Add(new SqlParameter("@Qty", _P.Qty));
             _cmd.Parameters.Add(new SqlParameter("@Unit", _P.Unit));
             _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
+
+            if (_cmd.ExecuteNonQuery() > 0)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+        finally
+        {
+            if (_con.State != ConnectionState.Closed)
+                _con.Close();
+        }
+    }
+    public bool UpdateProductPessimistic(Product _P)
+    {
+        try
+        {
+            if (_con.State != ConnectionState.Open)
+                _con.Open();
+
+            SqlCommand _cmd = _con.CreateCommand();
+            _cmd.CommandText = "Update Products set Name=@Name,Unit=@Unit,Qty=@Qty,LockUser=@LockUser,LockTime=@LockTime Where ProductID=@ProductID";
+            _cmd.Parameters.Add(new SqlParameter("@Name", _P.Name));
+            _cmd.Parameters.Add(new SqlParameter("@Qty", _P.Qty));
+            _cmd.Parameters.Add(new SqlParameter("@Unit", _P.Unit));
+            _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
+            _cmd.Parameters.Add(new SqlParameter("@LockUser", null));
+            _cmd.Parameters.Add(new SqlParameter("@LockTime", null));
 
             if (_cmd.ExecuteNonQuery() > 0)
                 return true;
@@ -246,6 +282,10 @@ public class DbProducts
                 _con.Close();
         }
     }
+    public string GetId()
+    {
+        return Guid.NewGuid().ToString();
+    }
 
     public Product GetProductById(int ProductID)
     {
@@ -267,6 +307,12 @@ public class DbProducts
                 _Product.Unit = _Reader["Unit"].ToString();
                 _Product.TimeStampAsString = Helpers.GetString((byte[])(_Reader["TimeStamp"]));
                 _Product.TimeStamp = (byte[])(_Reader["TimeStamp"]);
+
+
+                if (_Reader["LockUser"] != null)
+                    _Product.LockUser = _Reader["LockUser"].ToString();
+                if (_Reader["LockTime"].ToString() != String.Empty)
+                    _Product.LockTime = DateTime.Parse(_Reader["LockTime"].ToString());
             }
             return _Product;
         }
@@ -280,6 +326,34 @@ public class DbProducts
                 _con.Close();
         }
     }
+
+    public int GetProductByIdBlock(int ProductID, string guid)
+    {
+       try
+        {
+            if (_con.State != ConnectionState.Open)
+                _con.Open();
+            SqlCommand _cmd = _con.CreateCommand();
+            _cmd.CommandText = "Update Products set LockUser=@LockUser,LockTime=@LockTime Where ProductID=@ProductID";
+            _cmd.Parameters.Add(new SqlParameter("@ProductID", ProductID));
+            _cmd.Parameters.Add(new SqlParameter("@LockUser", guid));
+            _cmd.Parameters.Add(new SqlParameter("@LockTime", DateTime.Now));
+
+            _cmd.ExecuteNonQuery();
+            
+           return ProductID;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+        finally
+        {
+            if (_con.State != ConnectionState.Closed)
+                _con.Close();
+        }
+    }
+
 }
 
 public class Product
@@ -316,11 +390,9 @@ public class Product
         set { _Qty = value; }
     }
 
-
-    public Byte[] RowVersion { get; set; }
-
+    public DateTime LockTime { get; set; }
+    public string LockUser { get; set; }
     public Byte[] TimeStamp { get; set; }
-
     public string TimeStampAsString { get; set; }
 }
 
