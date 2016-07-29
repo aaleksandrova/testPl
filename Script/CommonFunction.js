@@ -4,7 +4,7 @@
         url: "ProductList.ashx" + parameter,
         data: data,
         dataType: datatype,
-        success: function(data, textStatus) {
+        success: function (data, textStatus) {
             try {
                 var jsonData = eval(data);
                 if (jsonData.IsSucess) {
@@ -18,8 +18,8 @@
                 alert(err);
             }
         },
-        error: function(jqXHR, textStatus, errorThrown) {
-            alert("Error:" + errorThrown +" and "+jqXHR+" and "+textStatus);
+        error: function (jqXHR, textStatus, errorThrown) {
+            alert("Error:" + errorThrown + " and " + jqXHR + " and " + textStatus);
         }
     });
 }
@@ -27,29 +27,29 @@
 $(document).ready(function () {
     $(".hide").css('display', 'none');
     FillListing();
-    getUserId();
+    GetUserId();
 });
 
 
 
 function SaveProducts(mode) {
-    var Param = "name=" + $("#txtName").val() + "&unit=" + $("#txtUnit").val() + "&Qty=" + $("#txtQty").val() + "&ver=" + $("#txtVer").val();
+    var param = "name=" + $("#txtName").val() + "&unit=" + $("#txtUnit").val() + "&Qty=" + $("#txtQty").val() + "&ver=" + $("#txtVer").val();
 
-    var ProductID = $("#txtId").val();
+    var productId = $("#txtId").val();
 
-    if (ProductID == 0) {
-        DoAjaxCall("?method=Insert&callbackmethod=InsertProductSucess&" + Param, "json", "");
+    if (productId == 0) {
+        DoAjaxCall("?method=Insert&callbackmethod=InsertProductSucess&" + param, "json", "");
     }
-    if (ProductID != 0 && (mode == undefined)) {
-        DoAjaxCall("?method=Update&callbackmethod=UpdateProductSucess&" + Param + "&ProductID=" + ProductID, "json", "");
+    if (productId != 0 && (mode == undefined)) {
+        DoAjaxCall("?method=Update&callbackmethod=UpdateProductSucess&" + param + "&ProductID=" + productId, "json", "");
     }
     if (mode == 'asIs') {
-        DoAjaxCall("?method=UpdateAsIs&callbackmethod=UpdateProductSucess&" + Param + "&ProductID=" + ProductID, "json", "");
+        DoAjaxCall("?method=UpdateAsIs&callbackmethod=UpdateProductSucess&" + param + "&ProductID=" + productId, "json", "");
     }
     if (mode == 'setFromDB') {
         FillListing();
         ClearValue();
-    } 
+    }
 }
 
 function SaveProductPessimistic() {
@@ -60,25 +60,25 @@ function SaveProductPessimistic() {
         DoAjaxCall("?method=Insert&callbackmethod=InsertProductSucess&" + param, "json", "");
     }
     else {
-        DoAjaxCall("?method=UpdatePessimistic&callbackmethod=UpdateProductSucess&" + Param + "&ProductID=" + ProductID, "json", "");
+        DoAjaxCall("?method=UpdatePessimistic&callbackmethod=UpdateProductSucess&" + param + "&ProductID=" + productId, "json", "");
     }
 }
 
-function getUserId() {
+function GetUserId() {
     DoAjaxCall("?method=GetUserId&callbackmethod=IdSucess", "json", "");
 }
 function saveValue(id) {
-    var ProductID = $("#txtId").val();
+    var productId = $("#txtId").val();
     var value = $("#" + id).val();
     switch (id) {
         case "txtName":
-            DoAjaxCall("?method=UpdateName&callbackmethod=UpdateProductSucess&" + "name=" + value + "&ProductID=" + ProductID, "json", "");
+            DoAjaxCall("?method=UpdateName&callbackmethod=UpdateProductSucess&" + "name=" + value + "&ProductID=" + productId, "json", "");
             break;
         case "txtUnit":
-            DoAjaxCall("?method=UpdateUnit&callbackmethod=UpdateProductSucess&" + "unit=" + value + "&ProductID=" + ProductID, "json", "");
+            DoAjaxCall("?method=UpdateUnit&callbackmethod=UpdateProductSucess&" + "unit=" + value + "&ProductID=" + productId, "json", "");
             break;
         case "txtQty":
-            DoAjaxCall("?method=UpdateQuality&callbackmethod=UpdateProductSucess&" + "Qty=" + value + "&ProductID=" + ProductID, "json", "");
+            DoAjaxCall("?method=UpdateQuality&callbackmethod=UpdateProductSucess&" + "Qty=" + value + "&ProductID=" + productId, "json", "");
             break;
 
         default:
@@ -144,8 +144,8 @@ function FillListingSucess2(data, message) {
         str += data[i].LockTime == "/Date(-62135596800000)/" ? "<td></td>" : "<td>" + data[i].LockTime + "</td>";
         str += data[i].LockUser == null ? "<td></td>" : "<td>" + data[i].LockUser + "</td>";
         str += "<td><a href='javascript:void(0)' onclick='DeleteProduct(" + data[i].ProductID + ")'>Delete</a></td>";
-        var par = "\'" + data[i].ProductID.toString() + "\'" + ", " + "\'" + data[i].LockUser+ "\'";
-        str += "<td><a href='javascript:void(0)' onclick='EditProductBlock(" +  data[i].ProductID + ")'>Edit</a></td></tr>";
+        var par = "\'" + data[i].ProductID.toString() + "\'" + ", " + "\'" + data[i].LockUser + "\'";
+        str += "<td><a href='javascript:void(0)' onclick='EditProductBlock(" + data[i].ProductID + ")'>Edit</a></td></tr>";
     }
     str += "</table>";
     $('#ListingData2').html(str);
@@ -167,12 +167,7 @@ function EditProduct(productId) {
 
 function EditProductBlock(productId, lockUser) {
     var param = "guid=" + $("#userId").val();
-    if (lockUser == null) {
-        DoAjaxCall("?method=getbyidBlock&callbackmethod=EditSucessBlock&" + param + "&ProductID=" + productId, "json", "");
-    }
-    else {
-        alert("BLOCKED");
-    }
+    DoAjaxCall("?method=getbyidBlock&callbackmethod=EditSucessBlock&" + param + "&ProductID=" + productId, "json", "");
 }
 
 function GetNewProduct(productId) {

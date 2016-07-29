@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Data.SqlClient;
 using System.Configuration;
 using System.Data;
-using System.Diagnostics.Eventing.Reader;
+using System.Data.SqlClient;
 
 /// <summary>
 /// Summary description for Products
@@ -13,37 +10,37 @@ using System.Diagnostics.Eventing.Reader;
 /// 
 public class DbProducts
 {
-    SqlConnection _con = new SqlConnection(ConfigurationManager.ConnectionStrings[1].ConnectionString);
+    readonly SqlConnection _con = new SqlConnection(ConfigurationManager.ConnectionStrings[1].ConnectionString);
 
     public List<Product> GetProductDetails()
     {
         try
         {
-            List<Product> _lstProducts = new List<Product>();
-            Product _Product = null;
-            if (_con.State != System.Data.ConnectionState.Open)
+            List<Product> lstProducts = new List<Product>();
+            Product product = null;
+            if (_con.State != ConnectionState.Open)
                 _con.Open();
-            SqlCommand _cmd = _con.CreateCommand();
-            _cmd.CommandText = "Select * From Products";
-            SqlDataReader _Reader = _cmd.ExecuteReader();
+            SqlCommand cmd = _con.CreateCommand();
+            cmd.CommandText = "Select * From Products";
+            SqlDataReader reader = cmd.ExecuteReader();
 
-            while (_Reader.Read())
+            while (reader.Read())
             {
 
-                _Product = new Product();
-                _Product.ProductID = Convert.ToInt32(_Reader["ProductID"]);
-                _Product.Name = _Reader["Name"].ToString();
-                _Product.Unit = _Reader["Unit"].ToString();
-                _Product.Qty = Convert.ToDecimal(_Reader["Qty"]);
-                if (_Reader["LockUser"] != null)
-                _Product.LockUser = _Reader["LockUser"].ToString();
-                if( _Reader["LockTime"].ToString()!=String.Empty)
-                _Product.LockTime = DateTime.Parse(_Reader["LockTime"].ToString());
+                product = new Product();
+                product.ProductID = Convert.ToInt32(reader["ProductID"]);
+                product.Name = reader["Name"].ToString();
+                product.Unit = reader["Unit"].ToString();
+                product.Qty = Convert.ToDecimal(reader["Qty"]);
+                if (reader["LockUser"] != null)
+                product.LockUser = reader["LockUser"].ToString();
+                if( reader["LockTime"].ToString()!=String.Empty)
+                product.LockTime = DateTime.Parse(reader["LockTime"].ToString());
 
-                _lstProducts.Add(_Product);
+                lstProducts.Add(product);
 
             }
-            return _lstProducts;
+            return lstProducts;
         }
         catch (Exception ex)
         {
@@ -51,25 +48,25 @@ public class DbProducts
         }
         finally
         {
-            if (_con.State != System.Data.ConnectionState.Closed)
+            if (_con.State != ConnectionState.Closed)
                 _con.Close();
         }
     }
 
-    public string InsertProduct(Product _P)
+    public string InsertProduct(Product p)
     {
         try
         {
 
-            if (_con.State != System.Data.ConnectionState.Open)
+            if (_con.State != ConnectionState.Open)
                 _con.Open();
-            SqlCommand _cmd = _con.CreateCommand();
-            _cmd.CommandText = "Insert Into Products(Name,Unit,Qty)Values(@Name,@Unit,@Qty)";
-            _cmd.Parameters.Add(new SqlParameter("@Name", _P.Name));
-            _cmd.Parameters.Add(new SqlParameter("@Qty", _P.Qty));
-            _cmd.Parameters.Add(new SqlParameter("@Unit", _P.Unit));
+            SqlCommand cmd = _con.CreateCommand();
+            cmd.CommandText = "Insert Into Products(Name,Unit,Qty)Values(@Name,@Unit,@Qty)";
+            cmd.Parameters.Add(new SqlParameter("@Name", p.Name));
+            cmd.Parameters.Add(new SqlParameter("@Qty", p.Qty));
+            cmd.Parameters.Add(new SqlParameter("@Unit", p.Unit));
 
-            if (_cmd.ExecuteNonQuery() > 0)
+            if (cmd.ExecuteNonQuery() > 0)
                 return "Record Sucessfully Saved";
             else
                 return "Record not Afftected to DataBase";
@@ -80,27 +77,27 @@ public class DbProducts
         }
         finally
         {
-            if (_con.State != System.Data.ConnectionState.Closed)
+            if (_con.State != ConnectionState.Closed)
                 _con.Close();
         }
     }
 
-    public bool UpdateProduct(Product _P)
+    public bool UpdateProduct(Product p)
     {
         try
         {
             if (_con.State != ConnectionState.Open)
                 _con.Open();
 
-            SqlCommand _cmd = _con.CreateCommand();
-            _cmd.CommandText = "Update Products set Name=@Name,Unit=@Unit,Qty=@Qty Where ProductID=@ProductID and TimeStamp = @TimeStamp";
-            _cmd.Parameters.Add(new SqlParameter("@Name", _P.Name));
-            _cmd.Parameters.Add(new SqlParameter("@Qty", _P.Qty));
-            _cmd.Parameters.Add(new SqlParameter("@Unit", _P.Unit));
-            _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
-            _cmd.Parameters.Add(new SqlParameter("@TimeStamp", _P.TimeStamp));
+            SqlCommand cmd = _con.CreateCommand();
+            cmd.CommandText = "Update Products set Name=@Name,Unit=@Unit,Qty=@Qty Where ProductID=@ProductID and TimeStamp = @TimeStamp";
+            cmd.Parameters.Add(new SqlParameter("@Name", p.Name));
+            cmd.Parameters.Add(new SqlParameter("@Qty", p.Qty));
+            cmd.Parameters.Add(new SqlParameter("@Unit", p.Unit));
+            cmd.Parameters.Add(new SqlParameter("@ProductID", p.ProductID));
+            cmd.Parameters.Add(new SqlParameter("@TimeStamp", p.TimeStamp));
 
-            if (_cmd.ExecuteNonQuery() > 0)
+            if (cmd.ExecuteNonQuery() > 0)
                 return true;
             else
                 return false;
@@ -116,21 +113,21 @@ public class DbProducts
         }
     }
 
-    public bool UpdateProductAsIs(Product _P)
+    public bool UpdateProductAsIs(Product p)
     {
         try
         {
             if (_con.State != ConnectionState.Open)
                 _con.Open();
 
-            SqlCommand _cmd = _con.CreateCommand();
-            _cmd.CommandText = "Update Products set Name=@Name,Unit=@Unit,Qty=@Qty Where ProductID=@ProductID";
-            _cmd.Parameters.Add(new SqlParameter("@Name", _P.Name));
-            _cmd.Parameters.Add(new SqlParameter("@Qty", _P.Qty));
-            _cmd.Parameters.Add(new SqlParameter("@Unit", _P.Unit));
-            _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
+            SqlCommand cmd = _con.CreateCommand();
+            cmd.CommandText = "Update Products set Name=@Name,Unit=@Unit,Qty=@Qty Where ProductID=@ProductID";
+            cmd.Parameters.Add(new SqlParameter("@Name", p.Name));
+            cmd.Parameters.Add(new SqlParameter("@Qty", p.Qty));
+            cmd.Parameters.Add(new SqlParameter("@Unit", p.Unit));
+            cmd.Parameters.Add(new SqlParameter("@ProductID", p.ProductID));
 
-            if (_cmd.ExecuteNonQuery() > 0)
+            if (cmd.ExecuteNonQuery() > 0)
                 return true;
             else
                 return false;
@@ -145,7 +142,7 @@ public class DbProducts
                 _con.Close();
         }
     }
-    public bool UpdateProductPessimistic(Product _P)
+    public bool UpdateProductPessimistic(Product p)
     {
         try
         {
@@ -154,10 +151,10 @@ public class DbProducts
 
             SqlCommand _cmd = _con.CreateCommand();
             _cmd.CommandText = "Update Products set Name=@Name,Unit=@Unit,Qty=@Qty,LockUser=@LockUser,LockTime=@LockTime Where ProductID=@ProductID";
-            _cmd.Parameters.Add(new SqlParameter("@Name", _P.Name));
-            _cmd.Parameters.Add(new SqlParameter("@Qty", _P.Qty));
-            _cmd.Parameters.Add(new SqlParameter("@Unit", _P.Unit));
-            _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
+            _cmd.Parameters.Add(new SqlParameter("@Name", p.Name));
+            _cmd.Parameters.Add(new SqlParameter("@Qty", p.Qty));
+            _cmd.Parameters.Add(new SqlParameter("@Unit", p.Unit));
+            _cmd.Parameters.Add(new SqlParameter("@ProductID", p.ProductID));
             _cmd.Parameters.Add(new SqlParameter("@LockUser", null));
             _cmd.Parameters.Add(new SqlParameter("@LockTime", null));
 
@@ -177,18 +174,18 @@ public class DbProducts
         }
     }
 
-    public bool UpdateName(Product _P)
+    public bool UpdateName(Product p)
     {
         try
         {
             if (_con.State != ConnectionState.Open)
                 _con.Open();
-            SqlCommand _cmd = _con.CreateCommand();
-            _cmd.CommandText = "Update Products set Name=@Name Where ProductID=@ProductID";
-            _cmd.Parameters.Add(new SqlParameter("@Name", _P.Name));
-            _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
+            SqlCommand cmd = _con.CreateCommand();
+            cmd.CommandText = "Update Products set Name=@Name Where ProductID=@ProductID";
+            cmd.Parameters.Add(new SqlParameter("@Name", p.Name));
+            cmd.Parameters.Add(new SqlParameter("@ProductID", p.ProductID));
 
-            if (_cmd.ExecuteNonQuery() > 0)
+            if (cmd.ExecuteNonQuery() > 0)
                 return true;
             else
                 return false;
@@ -204,18 +201,18 @@ public class DbProducts
         }
     }
 
-    public bool UpdateQuality(Product _P)
+    public bool UpdateQuality(Product p)
     {
         try
         {
             if (_con.State != ConnectionState.Open)
                 _con.Open();
-            SqlCommand _cmd = _con.CreateCommand();
-            _cmd.CommandText = "Update Products set Qty=@Qty Where ProductID=@ProductID";
-            _cmd.Parameters.Add(new SqlParameter("@Qty", _P.Qty));
-            _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
+            SqlCommand cmd = _con.CreateCommand();
+            cmd.CommandText = "Update Products set Qty=@Qty Where ProductID=@ProductID";
+            cmd.Parameters.Add(new SqlParameter("@Qty", p.Qty));
+            cmd.Parameters.Add(new SqlParameter("@ProductID", p.ProductID));
 
-            if (_cmd.ExecuteNonQuery() > 0)
+            if (cmd.ExecuteNonQuery() > 0)
                 return true;
             else
                 return false;
@@ -231,18 +228,18 @@ public class DbProducts
         }
     }
 
-    public bool UpdateUnit(Product _P)
+    public bool UpdateUnit(Product p)
     {
         try
         {
             if (_con.State != ConnectionState.Open)
                 _con.Open();
-            SqlCommand _cmd = _con.CreateCommand();
-            _cmd.CommandText = "Update Products set Unit=@Unit Where ProductID=@ProductID";
-            _cmd.Parameters.Add(new SqlParameter("@Unit", _P.Unit));
-            _cmd.Parameters.Add(new SqlParameter("@ProductID", _P.ProductID));
+            SqlCommand cmd = _con.CreateCommand();
+            cmd.CommandText = "Update Products set Unit=@Unit Where ProductID=@ProductID";
+            cmd.Parameters.Add(new SqlParameter("@Unit", p.Unit));
+            cmd.Parameters.Add(new SqlParameter("@ProductID", p.ProductID));
 
-            if (_cmd.ExecuteNonQuery() > 0)
+            if (cmd.ExecuteNonQuery() > 0)
                 return true;
             else
                 return false;
@@ -258,16 +255,16 @@ public class DbProducts
         }
     }
 
-    public string DeleteProduct(int ProductID)
+    public string DeleteProduct(int productId)
     {
         try
         {
             if (_con.State != ConnectionState.Open)
                 _con.Open();
-            SqlCommand _cmd = _con.CreateCommand();
-            _cmd.CommandText = "Delete From Products Where ProductID=@ProductID";
-            _cmd.Parameters.Add(new SqlParameter("@ProductID", ProductID));
-            if (_cmd.ExecuteNonQuery() > 0)
+            SqlCommand cmd = _con.CreateCommand();
+            cmd.CommandText = "Delete From Products Where ProductID=@ProductID";
+            cmd.Parameters.Add(new SqlParameter("@ProductID", productId));
+            if (cmd.ExecuteNonQuery() > 0)
                 return "Records Sucessfully Delete";
             else
                 return "Records not Afftected to DataBase";
@@ -287,34 +284,34 @@ public class DbProducts
         return Guid.NewGuid().ToString();
     }
 
-    public Product GetProductById(int ProductID)
+    public Product GetProductById(int productId)
     {
         try
         {
             if (_con.State != ConnectionState.Open)
                 _con.Open();
-            SqlCommand _cmd = _con.CreateCommand();
-            _cmd.CommandText = "Select * From Products Where ProductID=@ProductID";
-            _cmd.Parameters.Add(new SqlParameter("@ProductID", ProductID));
-            SqlDataReader _Reader = _cmd.ExecuteReader();
-            Product _Product = null;
+            SqlCommand cmd = _con.CreateCommand();
+            cmd.CommandText = "Select * From Products Where ProductID=@ProductID";
+            cmd.Parameters.Add(new SqlParameter("@ProductID", productId));
+            SqlDataReader _Reader = cmd.ExecuteReader();
+            Product product = null;
             while (_Reader.Read())
             {
-                _Product = new Product();
-                _Product.ProductID = Convert.ToInt32(_Reader["ProductID"]);
-                _Product.Name = _Reader["Name"].ToString();
-                _Product.Qty = Convert.ToDecimal(_Reader["Qty"]);
-                _Product.Unit = _Reader["Unit"].ToString();
-                _Product.TimeStampAsString = Helpers.GetString((byte[])(_Reader["TimeStamp"]));
-                _Product.TimeStamp = (byte[])(_Reader["TimeStamp"]);
+                product = new Product();
+                product.ProductID = Convert.ToInt32(_Reader["ProductID"]);
+                product.Name = _Reader["Name"].ToString();
+                product.Qty = Convert.ToDecimal(_Reader["Qty"]);
+                product.Unit = _Reader["Unit"].ToString();
+                product.TimeStampAsString = Helpers.GetString((byte[])(_Reader["TimeStamp"]));
+                product.TimeStamp = (byte[])(_Reader["TimeStamp"]);
 
 
                 if (_Reader["LockUser"] != null)
-                    _Product.LockUser = _Reader["LockUser"].ToString();
+                    product.LockUser = _Reader["LockUser"].ToString();
                 if (_Reader["LockTime"].ToString() != String.Empty)
-                    _Product.LockTime = DateTime.Parse(_Reader["LockTime"].ToString());
+                    product.LockTime = DateTime.Parse(_Reader["LockTime"].ToString());
             }
-            return _Product;
+            return product;
         }
         catch (Exception ex)
         {
@@ -327,21 +324,21 @@ public class DbProducts
         }
     }
 
-    public int GetProductByIdBlock(int ProductID, string guid)
+    public int GetProductByIdBlock(int productId, string guid)
     {
        try
         {
             if (_con.State != ConnectionState.Open)
                 _con.Open();
-            SqlCommand _cmd = _con.CreateCommand();
-            _cmd.CommandText = "Update Products set LockUser=@LockUser,LockTime=@LockTime Where ProductID=@ProductID";
-            _cmd.Parameters.Add(new SqlParameter("@ProductID", ProductID));
-            _cmd.Parameters.Add(new SqlParameter("@LockUser", guid));
-            _cmd.Parameters.Add(new SqlParameter("@LockTime", DateTime.Now));
+            SqlCommand cmd = _con.CreateCommand();
+            cmd.CommandText = "Update Products set LockUser=@LockUser,LockTime=@LockTime Where ProductID=@ProductID";
+            cmd.Parameters.Add(new SqlParameter("@ProductID", productId));
+            cmd.Parameters.Add(new SqlParameter("@LockUser", guid));
+            cmd.Parameters.Add(new SqlParameter("@LockTime", DateTime.Now));
 
-            _cmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();
             
-           return ProductID;
+           return productId;
         }
         catch (Exception ex)
         {
@@ -358,7 +355,7 @@ public class DbProducts
 
 public class Product
 {
-    private int _ProductID = 0;
+    private int _ProductID;
 
     public int ProductID
     {
@@ -382,7 +379,7 @@ public class Product
         set { _Unit = value; }
     }
 
-    private decimal _Qty = 0;
+    private decimal _Qty;
 
     public decimal Qty
     {
